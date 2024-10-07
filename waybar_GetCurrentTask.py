@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 import json
 import os
+import yaml
 
-def find_first_unchecked(elements):
+
+def find_first_unchecked(elements, offset: int):
     for element in elements:
         tmp = element.replace(" ", "")
 
@@ -10,7 +12,10 @@ def find_first_unchecked(elements):
             tmp = element.replace('[', "", 1).replace(']', "", 1).strip()
             if tmp[-2:] == '\\n':
                 tmp = tmp[:-2]
-            return tmp
+            if offset == 0:
+                return tmp
+            else:
+                offset-=1
     return None
 
 def convert_md_to_html(markdown_text):
@@ -96,15 +101,26 @@ except:
     exit()
     
 
-try:
-    tasks = content.split("-", 1)[1].split("-")
+#try:
+tasks = content.split("-", 1)[1].split("-")
 
-    metadata = get_metadata(content, "---")
+metadata = get_metadata(content, "---")
 
-    # good print
-    print_data(
-        convert_md_to_html(find_first_unchecked(tasks)),
-        f"<span size='large' color='yellow'><b>{currentFile}</b></span>\n" + convert_md_to_html(content)
-    )
-except:
-    print_data(generate_error("no tasks <b>(file empty)</b>"), "")
+metadata_yaml = yaml.safe_load(metadata["content"])
+
+task_to_do = find_first_unchecked(tasks, metadata_yaml["offset"])
+
+text = ""
+if task_to_do == None:
+    text = "<b>No more tasks to do</b>"
+else:
+    text = convert_md_to_html(task_to_do)
+
+
+# good print
+print_data(
+    text,
+    f"<span size='large' color='yellow'><b>{currentFile}</b></span>\n" + convert_md_to_html(content[metadata["end_char"]:].lstrip())
+)
+#except:
+#print_data(generate_error("no tasks <b>(file empty)</b>"), "")
