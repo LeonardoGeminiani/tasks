@@ -5,6 +5,7 @@ import yaml
 
 
 def find_first_unchecked(elements, offset: int):
+    cnt = 0
     for element in elements:
         tmp = element.replace(" ", "")
 
@@ -13,9 +14,13 @@ def find_first_unchecked(elements, offset: int):
             if tmp[-2:] == '\\n':
                 tmp = tmp[:-2]
             if offset == 0:
-                return tmp
+                return {
+                    "text": tmp,
+                    "number": cnt
+                }
             else:
                 offset-=1
+        cnt+=1
     return None
 
 def convert_md_to_html(markdown_text):
@@ -33,7 +38,7 @@ def convert_md_to_html(markdown_text):
     
     # Convert highlight
     while '==' in markdown_text:
-        markdown_text = markdown_text.replace('==', "<span bgcolor='#1f692a'>", 1).replace('==', '</span>', 1)
+        markdown_text = markdown_text.replace('==', "<span bgcolor='#27611b'>", 1).replace('==', '</span>', 1)
 
     markdown_text = markdown_text.replace('-', "&#x2022;")
     # ck box ☐☑
@@ -102,11 +107,10 @@ except:
     
 
 #try:
-tasks = content.split("-", 1)[1].split("-")
-
 metadata = get_metadata(content, "---")
-
 metadata_yaml = yaml.safe_load(metadata["content"])
+
+tasks = content[metadata["end_char"]:].lstrip().split("-", 1)[1].split("-")
 
 task_to_do = find_first_unchecked(tasks, metadata_yaml["offset"])
 
@@ -114,13 +118,25 @@ text = ""
 if task_to_do == None:
     text = "<b>No more tasks to do</b>"
 else:
-    text = convert_md_to_html(task_to_do)
+    text = convert_md_to_html(task_to_do["text"])
 
+tooltip = ""
+cnt = 0
+for task in tasks:
+    if cnt == task_to_do["number"]:
+        # arrow
+        tooltip +=  "<span color='#a6e3a1'>&#x279C;</span>"
+    else:
+        # space
+        tooltip += "<span>&#8195;</span>"
+    tooltip += convert_md_to_html(task)
+    cnt+=1
 
 # good print
 print_data(
     text,
-    f"<span size='large' color='yellow'><b>{currentFile}</b></span>\n" + convert_md_to_html(content[metadata["end_char"]:].lstrip())
+    f"<span size='large' color='#a6e3a1'>&#8195;<b>{currentFile.replace("_", " ").title()}</b></span>\n\n" + #convert_md_to_html(content[metadata["end_char"]:].lstrip())
+    tooltip
 )
 #except:
 #print_data(generate_error("no tasks <b>(file empty)</b>"), "")
