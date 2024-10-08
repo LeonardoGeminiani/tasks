@@ -2,13 +2,15 @@ import json
 import os
 import yaml
 
+def task_is_uncheked(task):
+    tmp = task.replace(" ", "")
+    return tmp.startswith('[]')
 
 def find_first_unchecked(elements, offset: int):
     cnt = 0
     for element in elements:
-        tmp = element.replace(" ", "")
 
-        if tmp.startswith('[]'):
+        if task_is_uncheked(element):
             tmp = element.replace('[', "", 1).replace(']', "", 1).strip()
             if tmp[-2:] == '\\n':
                 tmp = tmp[:-2]
