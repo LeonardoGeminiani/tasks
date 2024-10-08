@@ -5,6 +5,10 @@ import yaml
 
 from Functions import *
 
+def generate_error(error):
+    return f"<b>error: </b><span color='red'>{error}</span>"
+
+
 def print_data(text :str, tooltip :str):
     data = {
         "text" : text,

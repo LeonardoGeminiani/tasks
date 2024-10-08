@@ -47,9 +47,6 @@ def convert_md_to_html(markdown_text):
 
     return markdown_text
 
-def generate_error(error):
-    return f"<b>error: </b><span color='red'>{error}</span>"
-
 def get_metadata(file: str, metadata_tag: str):
     if file.lstrip().startswith(metadata_tag):
         # Find the first occurrence of the tag and move to the end of it
