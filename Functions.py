@@ -64,14 +64,13 @@ def get_metadata(file: str, metadata_tag: str):
         # Find the second occurrence of the tag, starting after the first one
         end_index = file.find(metadata_tag, start_index)
         
-        if start_index != -1 and end_index != -1:
+        if end_index != -1:
             return {
                 "content": file[start_index:end_index].strip(),
                 "end_char": (end_index + tag_len)
             }
         return None
     return None
-
 
 def open_taskFile(on_error):
     try:
@@ -105,7 +104,27 @@ def open_taskFile(on_error):
         exit()
     
     return settings, file_content
-    
+
+def write_taskFile(content: str, settings: object, on_error):
+    try:
+        dir = f"{os.getenv('HOME')}/tasks"
+        files = os.listdir(dir)
+
+        if ".config" not in files:
+            on_error(f"{dir}/.config does not exsist")
+
+    except:
+        on_error(f"{dir} does not exist")
+        exit()
+
+    currentFile = settings["currentFile"]
+
+    try:
+        with open(f"{dir}/{currentFile}.md", 'w') as file:
+            file.write(content)
+    except:
+        on_error(f"not valid currentFile Selected")
+
 
 def get_tasks(file_content: str):
     metadata = get_metadata(file_content, "---")
@@ -114,3 +133,17 @@ def get_tasks(file_content: str):
     tasks = file_content[metadata["end_char"]:].lstrip().split("-", 1)[1].split("-")
 
     return tasks, metadata_yaml
+
+def set_metadata(metadata: object, metadata_tag: str, file: str):
+    start_index = 0
+    if file.lstrip().startswith(metadata_tag):
+        # Find the first occurrence of the tag and move to the end of it
+        tag_len = len(metadata_tag)
+        start_index = file.find(metadata_tag) 
+        end_index = file.find(metadata_tag, start_index + tag_len) + tag_len
+        
+        if end_index != -1:
+            file = file[:start_index] + file[end_index + 1:]
+    file = file[:start_index] + "---\n" + yaml.dump(metadata, default_flow_style=False) + "---\n" + file[start_index:]
+    return file
+    

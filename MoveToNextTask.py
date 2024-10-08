@@ -19,6 +19,10 @@ try:
     newoffset = (offset +1)%unchecked_tasks
     metadata["offset"] = newoffset
 
-    print(newoffset)
+    new_file_content = set_metadata(metadata, "---", file_content);
+    write_taskFile(new_file_content, settings, lambda error:
+        print(error)    
+    )
+
 except:
     print("file empty")
