@@ -126,12 +126,14 @@ def write_taskFile(content: str, settings: object, on_error):
         on_error(f"not valid currentFile Selected")
 
 
-def get_tasks(file_content: str):
+def get_tasks(file_content: str, raw_metadata=False):
     metadata = get_metadata(file_content, "---")
     metadata_yaml = yaml.safe_load(metadata["content"])
 
     tasks = file_content[metadata["end_char"]:].lstrip().split("-", 1)[1].split("-")
 
+    if raw_metadata:
+        return tasks, metadata_yaml, metadata
     return tasks, metadata_yaml
 
 def set_metadata(metadata: object, metadata_tag: str, file: str):
