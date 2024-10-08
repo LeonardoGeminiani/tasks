@@ -5,15 +5,13 @@ import yaml
 
 from Functions import *
 
-[settings, content] = open_taskFile()
+settings, file_content = open_taskFile()
 
 try:
-    metadata = get_metadata(content, "---")
-    metadata_yaml = yaml.safe_load(metadata["content"])
+    
+    tasks, metadata = get_tasks(file_content)
 
-    tasks = content[metadata["end_char"]:].lstrip().split("-", 1)[1].split("-")
-
-    task_to_do = find_first_unchecked(tasks, metadata_yaml["offset"])
+    task_to_do = find_first_unchecked(tasks, metadata["offset"])
 
     text = ""
     if task_to_do == None:

@@ -101,12 +101,18 @@ def open_taskFile():
 
     try:
         with open(f"{dir}/{currentFile}.md", 'r') as file:
-            content = file.read()
+            file_content = file.read()
     except:
         print_data(generate_error(f"not valid currentFile Selected"), "")
         exit()
     
-    return [
-        settings,
-        content
-    ]
+    return settings, file_content
+    
+
+def get_tasks(file_content: str):
+    metadata = get_metadata(file_content, "---")
+    metadata_yaml = yaml.safe_load(metadata["content"])
+
+    tasks = file_content[metadata["end_char"]:].lstrip().split("-", 1)[1].split("-")
+
+    return tasks, metadata_yaml
