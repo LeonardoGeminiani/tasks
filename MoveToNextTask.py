@@ -12,8 +12,13 @@ settings, file_content = open_taskFile(
 
 try:
     tasks, metadata = get_tasks(file_content)
+    unchecked_tasks = count_unchecked(tasks)
 
+    offset = metadata["offset"]
 
-    print(tasks)
+    newoffset = (offset +1)%unchecked_tasks
+    metadata["offset"] = newoffset
+
+    print(newoffset)
 except:
     print("file empty")

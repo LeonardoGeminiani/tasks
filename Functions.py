@@ -24,6 +24,13 @@ def find_first_unchecked(elements, offset: int):
         cnt+=1
     return None
 
+def count_unchecked(tasks):
+    c = 0
+    for task in tasks:
+        if task_is_uncheked(task):
+            c+=1
+    return c
+
 def convert_md_to_html(markdown_text):
     markdown_text = markdown_text.replace('\\**', '')
     markdown_text = markdown_text.replace('\\*', '')
