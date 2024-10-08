@@ -5,5 +5,12 @@ import yaml
 
 from Functions import *
 
-[settings, content] = open_taskFile()
+settings, file_content = open_taskFile(
+    lambda error:
+        print("error")
+)
 
+try:
+    tasks, metadata = get_tasks(file_content)
+except:
+    print("file empty")

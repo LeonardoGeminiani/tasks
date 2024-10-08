@@ -5,7 +5,17 @@ import yaml
 
 from Functions import *
 
-settings, file_content = open_taskFile()
+def print_data(text :str, tooltip :str):
+    data = {
+        "text" : text,
+        "tooltip" : tooltip
+    }
+    print(json.dumps(data))
+
+settings, file_content = open_taskFile(
+    lambda error: 
+        print_data(generate_error(error), "")
+)
 
 try:
     

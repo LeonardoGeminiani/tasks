@@ -50,13 +50,6 @@ def convert_md_to_html(markdown_text):
 def generate_error(error):
     return f"<b>error: </b><span color='red'>{error}</span>"
 
-def print_data(text :str, tooltip :str):
-    data = {
-        "text" : text,
-        "tooltip" : tooltip
-    }
-    print(json.dumps(data))
-
 def get_metadata(file: str, metadata_tag: str):
     if file.lstrip().startswith(metadata_tag):
         # Find the first occurrence of the tag and move to the end of it
@@ -74,8 +67,7 @@ def get_metadata(file: str, metadata_tag: str):
     return None
 
 
-
-def open_taskFile():
+def open_taskFile(on_error):
     try:
         dir = f"{os.getenv('HOME')}/tasks"
         files = os.listdir(dir)
@@ -93,7 +85,7 @@ def open_taskFile():
                 }
                 json.dump(settings, file, indent=4)
     except:
-        print_data(generate_error(f"{dir} does not exist"), "")
+        on_error(f"{dir} does not exist")
         exit()
 
 
@@ -103,7 +95,7 @@ def open_taskFile():
         with open(f"{dir}/{currentFile}.md", 'r') as file:
             file_content = file.read()
     except:
-        print_data(generate_error(f"not valid currentFile Selected"), "")
+        on_error(f"not valid currentFile Selected")
         exit()
     
     return settings, file_content
