@@ -5,7 +5,7 @@ import yaml
 
 from Functions import *
 
-[settings, content] = open_task()
+[settings, content] = open_taskFile()
 
 #try:
 

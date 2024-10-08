@@ -75,7 +75,7 @@ def get_metadata(file: str, metadata_tag: str):
 
 
 
-def open_task():
+def open_taskFile():
     try:
         dir = f"{os.getenv('HOME')}/tasks"
         files = os.listdir(dir)
