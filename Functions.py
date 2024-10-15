@@ -2,6 +2,8 @@ import json
 import os
 import yaml
 
+DIR = f"{os.getenv('HOME')}/tasks"
+
 def task_is_uncheked(task):
     tmp = task.replace(" ", "")
     return tmp.startswith('[]')
@@ -72,15 +74,35 @@ def get_metadata(file: str, metadata_tag: str):
         return None
     return None
 
-def open_taskFile(on_error):
+def set_settings(settings, on_error):
     try:
-        dir = f"{os.getenv('HOME')}/tasks"
-        files = os.listdir(dir)
+        files = os.listdir(DIR)
 
         if ".config" not in files:
-            os.makedirs(f"{dir}/.config", exist_ok=True)
+            on_error(f"{DIR}/.config does not exsist")
+            exit()
+            
+        files = os.listdir(f"{DIR}/.config")
+        
+        if "settings.json" not in files:
+            on_error("settings.json does not exist")
 
-        with open(f"{dir}/.config/settings.json", "r+") as file:
+    except:
+        on_error(f"{DIR} does not exist")
+        exit()
+    
+    with open(f"{DIR}/.config/settings.json", "w") as file:
+        json.dump(settings, file, indent=4)
+
+
+def get_settings(on_error, files_ret=False):
+    try:
+        files = os.listdir(DIR)
+
+        if ".config" not in files:
+            os.makedirs(f"{DIR}/.config", exist_ok=True)
+
+        with open(f"{DIR}/.config/settings.json", "r+") as file:
             try:
                 settings = json.load(file)
             except:
@@ -90,14 +112,20 @@ def open_taskFile(on_error):
                 }
                 json.dump(settings, file, indent=4)
     except:
-        on_error(f"{dir} does not exist")
+        on_error(f"{DIR} does not exist")
         exit()
+    if files_ret:
+        return settings, files
+    return settings
 
+
+def open_taskFile(on_error):
+    settings = get_settings(on_error)
 
     currentFile = settings["currentFile"]
 
     try:
-        with open(f"{dir}/{currentFile}.md", 'r') as file:
+        with open(f"{DIR}/{currentFile}.md", 'r') as file:
             file_content = file.read()
     except:
         on_error(f"not valid currentFile Selected")
@@ -107,20 +135,20 @@ def open_taskFile(on_error):
 
 def write_taskFile(content: str, settings: object, on_error):
     try:
-        dir = f"{os.getenv('HOME')}/tasks"
-        files = os.listdir(dir)
+        files = os.listdir(DIR)
 
         if ".config" not in files:
-            on_error(f"{dir}/.config does not exsist")
+            on_error(f"{DIR}/.config does not exsist")
+            exit()
 
     except:
-        on_error(f"{dir} does not exist")
+        on_error(f"{DIR} does not exist")
         exit()
 
     currentFile = settings["currentFile"]
 
     try:
-        with open(f"{dir}/{currentFile}.md", 'w') as file:
+        with open(f"{DIR}/{currentFile}.md", 'w') as file:
             file.write(content)
     except:
         on_error(f"not valid currentFile Selected")
