@@ -75,7 +75,7 @@ options="$mark\n$move\n$edit\n$change"
 if [[ ! $(pidof wofi) ]]; then
   echo -e $options | wofi --show dmenu --prompt 'Search...' \
     --conf ${CONFIG} --style ${STYLE} --color ${COLORS} \
-    --width=200 --height=178 | cliphist decode | wl-copy
+    --width=200 --height=178 | 
 else
 	pkill wofi
 fi

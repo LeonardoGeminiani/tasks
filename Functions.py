@@ -93,6 +93,7 @@ def set_settings(settings, on_error):
     
     with open(f"{DIR}/.config/settings.json", "w") as file:
         json.dump(settings, file, indent=4)
+        print("ra")
 
 
 def get_settings(on_error, files_ret=False):
@@ -102,7 +103,7 @@ def get_settings(on_error, files_ret=False):
         if ".config" not in files:
             os.makedirs(f"{DIR}/.config", exist_ok=True)
 
-        with open(f"{DIR}/.config/settings.json", "w+") as file:
+        with open(f"{DIR}/.config/settings.json", "r+") as file:
             try:
                 settings = json.load(file)
             except:
@@ -110,6 +111,7 @@ def get_settings(on_error, files_ret=False):
                 settings = {
                     "currentFile": ""
                 }
+                
                 json.dump(settings, file, indent=4)
     except:
         on_error(f"{DIR} does not exist")
