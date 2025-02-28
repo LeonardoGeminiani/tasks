@@ -102,7 +102,7 @@ def get_settings(on_error, files_ret=False):
         if ".config" not in files:
             os.makedirs(f"{DIR}/.config", exist_ok=True)
 
-        with open(f"{DIR}/.config/settings.json", "r+") as file:
+        with open(f"{DIR}/.config/settings.json", "w+") as file:
             try:
                 settings = json.load(file)
             except:
